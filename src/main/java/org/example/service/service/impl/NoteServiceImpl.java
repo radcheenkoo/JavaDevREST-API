@@ -40,34 +40,33 @@ public class NoteServiceImpl implements NoteService {
 
     @Override
     @Transactional
-    public List<NoteDto> addAll(Collection<NoteDto> notes) {
-        Collection<NoteEntity> notesForSave = noteMapper.toNoteEntities(notes);
-        notesForSave.forEach(note -> {
-            note.setCreatedDate(LocalDate.now());
-            note.setLastUpdatedDate(LocalDate.now());
-        });
-        return noteMapper.toNoteDtos(noteRepository.saveAll(notesForSave));
-    }
-
-    @Override
-    @Transactional
-    public void deleteById(UUID id) throws NoteNotFoundException {
+    public boolean  deleteById(UUID id) throws NoteNotFoundException {
         NoteDto note = getById(id);
         if (Objects.isNull(note.getId())) {
-            throw new NoteNotFoundException(id);
+            log.info("Error ==== >>> " + new NoteNotFoundException(id));
+            return false;
         }
         noteRepository.deleteById(id);
+        return true;
     }
 
     @Override
     @Transactional
-    public void update(NoteDto note) throws NoteNotFoundException {
+    public boolean  update(UUID id, NoteDto note) throws NoteNotFoundException {
+
         if (Objects.isNull(note.getId())) {
-            throw new NoteNotFoundException();
+            log.info("Error: " + new NoteNotFoundException());
+            return false;
         }
-        getById(note.getId());
-        note.setLastUpdatedDate(LocalDate.now());
-        noteRepository.save(noteMapper.toNoteEntity(note));
+
+        NoteDto resNoteDto = getById(id);
+
+        resNoteDto.setTitle(note.getTitle());
+        resNoteDto.setContent(note.getContent());
+        resNoteDto.setLastUpdatedDate(LocalDate.now());
+
+        noteRepository.save(noteMapper.toNoteEntity(resNoteDto));
+        return true;
     }
 
     @Override

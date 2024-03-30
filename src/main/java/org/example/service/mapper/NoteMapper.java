@@ -1,6 +1,7 @@
 package org.example.service.mapper;
 
 import org.example.controller.request.CreateNoteRequest;
+import org.example.controller.request.NoteRequest;
 import org.example.controller.request.UpdateNoteRequest;
 import org.example.controller.response.NoteResponse;
 import org.example.data.entitry.NoteEntity;
@@ -67,7 +68,7 @@ public class NoteMapper {
                 .collect(Collectors.toList());
     }
 
-    public NoteDto toNoteDto(CreateNoteRequest request) {
+    public NoteDto toNoteDto(NoteRequest request) {
         NoteDto dto = new NoteDto();
         dto.setTitle(request.getTitle());
         dto.setContent(request.getContent());
